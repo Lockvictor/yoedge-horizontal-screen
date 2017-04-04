@@ -13,9 +13,21 @@
 
 (function () {
     'use strict';
+    // 根据工具栏的有无判断漫画是否已经加载
+    var settingButtonFlag;
+    settingButtonFlag = setInterval(function () {
+        var settingButton = document.getElementById('normal-button').parentElement;
+        if (settingButton !== null) {
+            settingButton.style.position = 'fixed';
+            clearInterval(settingButtonFlag);
+            main();
+        }
+    }, 1000);
+})();
+
+function main() {
     var canvasObj = document.getElementsByTagName('canvas')[0],
         containerObj = canvasObj.parentElement;
-
 
     // 调整canvas和container
     var expectedCanvasWidth = screen.width * 0.5; //画布宽度为屏幕50%时阅读效果较好
@@ -26,16 +38,4 @@
     containerObj.style.height = 'auto';
     containerObj.style.margin = '0';
     containerObj.style.textAlign = 'center';
-
-
-    // 调整工具栏
-    var settingButtonFlag;
-    settingButtonFlag = setInterval(function () {
-        var settingButton = document.getElementById('normal-button').parentElement;
-        if (settingButton !== null) {
-            settingButton.style.position = 'fixed';
-            clearInterval(settingButtonFlag);
-        }
-        console.log('setting button not ready');
-    }, 2000);
-})();
+}
