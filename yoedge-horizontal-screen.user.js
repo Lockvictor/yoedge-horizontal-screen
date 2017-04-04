@@ -30,12 +30,29 @@ function main() {
         containerObj = canvasObj.parentElement;
 
     // 调整canvas和container
-    var expectedCanvasWidth = screen.width * 0.5; //画布宽度为屏幕50%时阅读效果较好
+    var SCALE_RATIO = 0.5; //画布宽度占屏幕宽度的比例
+    var expectedCanvasWidth = screen.width * SCALE_RATIO;
+    var expectedCanvasHeight = expectedCanvasWidth * 1.5;
 
     canvasObj.style.width = expectedCanvasWidth + 'px';
-    canvasObj.style.height =  expectedCanvasWidth * 1.5 + 'px';
+    canvasObj.style.height =  expectedCanvasHeight + 'px';
     containerObj.style.width = '100%';
     containerObj.style.height = 'auto';
     containerObj.style.margin = '0';
     containerObj.style.textAlign = 'center';
+
+
+    // 构造一个遮罩屏蔽canvas缩放
+    var mask = document.createElement('div');
+    var MASK_MARGIN = 40; //上下各留的空白
+
+    mask.style.width = expectedCanvasWidth + 'px';
+    mask.style.height = (expectedCanvasHeight - 2 * MASK_MARGIN) + 'px';
+    mask.style.zIndex = 1;
+    mask.style.position = 'absolute';
+    mask.style.top = MASK_MARGIN + 'px';
+    mask.style.left = '50%';
+    mask.style.marginLeft = -expectedCanvasWidth/2 + 'px';
+
+    containerObj.appendChild(mask);
 }
