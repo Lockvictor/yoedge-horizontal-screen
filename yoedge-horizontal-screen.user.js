@@ -11,6 +11,11 @@
 // @grant       none
 // ==/UserScript==
 
+var SCALE_RATIO = 0.5; //画布宽度占屏幕宽度的比例
+var WIDTH = screen.width * SCALE_RATIO;
+var HEIGHT = WIDTH * 1.5;
+
+
 (function () {
     'use strict';
     // 根据工具栏的有无判断漫画是否已经加载
@@ -25,34 +30,58 @@
     }, 1000);
 })();
 
+
 function main() {
     var canvasObj = document.getElementsByTagName('canvas')[0],
         containerObj = canvasObj.parentElement;
 
     // 调整canvas和container
-    var SCALE_RATIO = 0.5; //画布宽度占屏幕宽度的比例
-    var expectedCanvasWidth = screen.width * SCALE_RATIO;
-    var expectedCanvasHeight = expectedCanvasWidth * 1.5;
+    resizeCanvas(canvasObj, containerObj);
 
-    canvasObj.style.width = expectedCanvasWidth + 'px';
-    canvasObj.style.height =  expectedCanvasHeight + 'px';
+    // 构造遮罩屏蔽canvas缩放
+    addMask(containerObj);
+}
+
+
+function resizeCanvas(canvasObj, containerObj) {
+    canvasObj.style.width = WIDTH + 'px';
+    canvasObj.style.height = HEIGHT + 'px';
     containerObj.style.width = '100%';
     containerObj.style.height = 'auto';
     containerObj.style.margin = '0';
     containerObj.style.textAlign = 'center';
+}
 
 
-    // 构造一个遮罩屏蔽canvas缩放
-    var mask = document.createElement('div');
-    var MASK_MARGIN = 40; //上下各留的空白
+function addMask(containerObj) {
+    var pagerButtonWidth = 80;
+    var pagerButtonHeight = 50;
 
-    mask.style.width = expectedCanvasWidth + 'px';
-    mask.style.height = (expectedCanvasHeight - 2 * MASK_MARGIN) + 'px';
-    mask.style.zIndex = 1;
-    mask.style.position = 'absolute';
-    mask.style.top = MASK_MARGIN + 'px';
-    mask.style.left = '50%';
-    mask.style.marginLeft = -expectedCanvasWidth/2 + 'px';
+    var maskList = [];
+    // 通用样式
+    for (let i = 0; i < 3; i++) {
+        maskList[i] = document.createElement('div');
+        let mask = maskList[i];
+        mask.width = (WIDTH - pagerButtonWidth) / 2
+        mask.style.width = mask.width + 'px';
+        mask.height = HEIGHT;
+        mask.style.height = mask.height + 'px';
+        mask.style.zIndex = 1;
+        mask.style.position = 'absolute';
+        mask.style.top = '0';
+        mask.style.left = '50%';
+        // mask.style.backgroundColor = 'rgba(211, 211, 211, 0.3)';
+    }
+    // 左侧遮罩
+    maskList[0].style.marginLeft = -WIDTH / 2 + 'px';
+    // 中间遮罩
+    maskList[1].style.marginLeft = - maskList[1].width / 2 + 'px';
+    maskList[1].style.height = (HEIGHT - 2 * pagerButtonHeight) + 'px';
+    maskList[1].style.top = pagerButtonHeight + 'px';
+    // 右侧遮罩
+    maskList[2].style.marginLeft = pagerButtonWidth / 2 + 'px';
 
-    containerObj.appendChild(mask);
+    for (let i = 0; i < 3; i++) {
+        containerObj.appendChild(maskList[i]);
+    }
 }
