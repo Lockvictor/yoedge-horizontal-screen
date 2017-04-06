@@ -13,7 +13,7 @@
 
 var MANGA_ASPECT_RATIO = 1.5; //漫画宽高比
 
-var gMangaAreaRatio = 0.5; //漫画宽度占屏幕宽度的比例
+var gMangaAreaRatio = 0.6; //漫画宽度占屏幕宽度的比例
 var MAX_SCALE_RATIO = 1; //最大缩放比例，与屏幕等宽
 var MIN_SCALE_RATIO = 0.5; //最小缩放比例，屏幕的30%
 var SCALE_STEP = 0.05;
@@ -128,8 +128,12 @@ function addPageTurningEventListener(canvasObj, canvasMask) {
         // console.log(event);
         var canvasHeight = screen.width * gMangaAreaRatio * MANGA_ASPECT_RATIO;
         var pageButtonAreaHeight = canvasHeight * PAGE_BUTTON_AREA_RATIO;
-        if (event.layerY <= pageButtonAreaHeight || event.layerY >= (canvasHeight - pageButtonAreaHeight)) {
+        if (event.layerY <= pageButtonAreaHeight) {
             canvasObj.dispatchEvent(new MouseEvent(event.type, event));
+            scroll(0, document.body.scrollHeight);
+        } else if (event.layerY >= (canvasHeight - pageButtonAreaHeight)) {
+            canvasObj.dispatchEvent(new MouseEvent(event.type, event));
+            scroll(0, 0);
         }
     });
 }
