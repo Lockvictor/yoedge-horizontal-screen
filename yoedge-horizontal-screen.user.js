@@ -13,12 +13,14 @@
 
 var MANGA_ASPECT_RATIO = 1.5; //漫画宽高比
 
-var gMangaAreaRatio = 0.6; //漫画宽度占屏幕宽度的比例
+var DEFAULT_SCALE_RATIO = 0.6; //默认缩放比例
 var MAX_SCALE_RATIO = 1; //最大缩放比例，与屏幕等宽
 var MIN_SCALE_RATIO = 0.5; //最小缩放比例，屏幕的50%
 var SCALE_STEP = 0.05;
 
 var PAGE_BUTTON_AREA_RATIO = 0.1; //顶部和底部响应翻页事件的区域比例，10%
+
+var gMangaAreaRatio = DEFAULT_SCALE_RATIO; //漫画宽度占屏幕宽度的比例
 
 
 (function () {
@@ -52,10 +54,14 @@ var PAGE_BUTTON_AREA_RATIO = 0.1; //顶部和底部响应翻页事件的区域�
     //用-和=缩放漫画
     document.addEventListener('keyup', function (event) {
         console.log(event);
-        if (event.key === '-') {
+        var key = event.key;
+        if (key === '-') {
             scaleCanvas(canvasObj, -SCALE_STEP);
-        } else if (event.key === '=') {
+        } else if (key === '=') {
             scaleCanvas(canvasObj, SCALE_STEP);
+        } else if (key === '0') {
+            gMangaAreaRatio = DEFAULT_SCALE_RATIO;
+            scaleCanvas(canvasObj, 0);
         }
     });
 })();
