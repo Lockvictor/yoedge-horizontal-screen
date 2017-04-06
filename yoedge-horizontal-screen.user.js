@@ -15,7 +15,7 @@ var MANGA_ASPECT_RATIO = 1.5; //漫画宽高比
 
 var gMangaAreaRatio = 0.6; //漫画宽度占屏幕宽度的比例
 var MAX_SCALE_RATIO = 1; //最大缩放比例，与屏幕等宽
-var MIN_SCALE_RATIO = 0.5; //最小缩放比例，屏幕的30%
+var MIN_SCALE_RATIO = 0.5; //最小缩放比例，屏幕的50%
 var SCALE_STEP = 0.05;
 
 var PAGE_BUTTON_AREA_RATIO = 0.1; //顶部和底部响应翻页事件的区域比例，10%
@@ -48,6 +48,16 @@ var PAGE_BUTTON_AREA_RATIO = 0.1; //顶部和底部响应翻页事件的区域�
 
     // 添加遮罩覆盖canvas的缩放和翻页
     addCanvasMask(canvasObj, containerObj);
+
+    //用-和=缩放漫画
+    document.addEventListener('keyup', function (event) {
+        console.log(event);
+        if (event.key === '-') {
+            scaleCanvas(canvasObj, -SCALE_STEP);
+        } else if (event.key === '=') {
+            scaleCanvas(canvasObj, SCALE_STEP);
+        }
+    });
 })();
 
 
@@ -86,41 +96,12 @@ function addCanvasMask(canvasObj, containerObj) {
     canvasMask.style.top = '0';
     canvasMask.style.left = '50%';
     canvasMask.style.marginLeft = - canvasWidth / 2 + 'px';
-    canvasMask.style.backgroundColor = 'rgba(211, 211, 211, 0.3)';
-
-    //添加鼠标滚轮缩放事件
-    addMousewheelEventListener(canvasObj, canvasMask);
+    // canvasMask.style.backgroundColor = 'rgba(211, 211, 211, 0.3)';
 
     //添加鼠标点击翻页事件
     addPageTurningEventListener(canvasObj, canvasMask)
 
     containerObj.appendChild(canvasMask);
-}
-
-function addMousewheelEventListener(canvasObj, canvasMask) {
-    //一般浏览器的鼠标滚轮事件
-    canvasMask.addEventListener('mousewheel', function (event) {
-        // console.log(event);
-        if (event.deltaY < 0) {//放大
-            scaleCanvas(canvasObj, SCALE_STEP);
-        } else if (event.deltaY > 0) { //缩小
-            scaleCanvas(canvasObj, -SCALE_STEP);
-        }
-        event.stopPropagation();
-        event.preventDefault();
-    });
-
-    // 火狐的鼠标滚轮事件
-    canvasMask.addEventListener('DOMMouseScroll', function (event) {
-        // console.log(event);
-        if (event.detail < 0) {//放大
-            scaleCanvas(canvasObj, SCALE_STEP);
-        } else if (event.detail > 0) { //缩小
-            scaleCanvas(canvasObj, -SCALE_STEP);
-        }
-        event.stopPropagation();
-        event.preventDefault();
-    });
 }
 
 function addPageTurningEventListener(canvasObj, canvasMask) {
