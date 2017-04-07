@@ -2,7 +2,9 @@
 // @name        yoedge-horizontal-screen
 // @namespace   https://github.com/Lockvictor
 // @author      Lockvictor
-// @description 实现灰机漫画网站的横屏阅读
+// @description 实现灰机汉化组漫画网站（yoedge.com）的横屏阅读模式 
+// @homepage    https://github.com/Lockvictor/yoedge-horizontal-screen
+// @updateURL   https://github.com/Lockvictor/yoedge-horizontal-screen/raw/master/yoedge-horizontal-screen.user.js
 // @match       http://*.yoedge.com/smp-app/*
 // @version     0.1
 // @grant       none
@@ -32,7 +34,12 @@ var gMangaAreaRatio = DEFAULT_SCALE_RATIO; //漫画宽度占屏幕宽度的比�
         var settingButton = document.getElementById('normal-button').parentElement;
         if (settingButton !== null) {
             settingButton.style.position = 'fixed';
-            document.getElementsByClassName('tool-container')[0].style.position = 'fixed';
+            // 修正弹出的工具栏的位置
+            // settingButton.addEventListener('click', function () {
+            //     var toolContainer = document.getElementsByClassName('tool-container')[0];
+            //     toolContainer.style.position = 'fixed';
+            //     toolContainer.style.top = '99.5%';
+            // });
             clearInterval(settingButtonFlag);
         }
     }, 1000);
