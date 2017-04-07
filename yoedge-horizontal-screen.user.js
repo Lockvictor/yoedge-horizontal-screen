@@ -3,10 +3,7 @@
 // @namespace   https://github.com/Lockvictor
 // @author      Lockvictor
 // @description 实现灰机漫画网站的横屏阅读
-// @match       http://smp.yoedge.com/smp-app/*
-// @match       http://smp1.yoedge.com/smp-app/*
-// @match       http://smp2.yoedge.com/smp-app/*
-// @match       http://smp3.yoedge.com/smp-app/*
+// @match       http://*.yoedge.com/smp-app/*
 // @version     0.1
 // @grant       none
 // ==/UserScript==
@@ -35,6 +32,7 @@ var gMangaAreaRatio = DEFAULT_SCALE_RATIO; //漫画宽度占屏幕宽度的比�
         var settingButton = document.getElementById('normal-button').parentElement;
         if (settingButton !== null) {
             settingButton.style.position = 'fixed';
+            document.getElementsByClassName('tool-container')[0].style.position = 'fixed';
             clearInterval(settingButtonFlag);
         }
     }, 1000);
@@ -99,7 +97,6 @@ function addCanvasMask(canvasObj, containerObj) {
 
     //添加鼠标点击翻页事件
     canvasMask.addEventListener('mouseup', function (event) {
-        // console.log(event);
         var canvasHeight = screen.width * gMangaAreaRatio * MANGA_ASPECT_RATIO;
         var pageButtonAreaHeight = canvasHeight * PAGE_BUTTON_AREA_RATIO;
         if (event.layerY <= pageButtonAreaHeight) {
@@ -127,7 +124,6 @@ function fixModalBehavior() {
 function customizeShortcut(canvasObj) {
     //漫画缩放、滚动、翻页
     document.addEventListener('keydown', function (event) {
-        console.log(event);
         switch (event.key) {
             case '=':
                 scaleCanvas(canvasObj, SCALE_STEP);
