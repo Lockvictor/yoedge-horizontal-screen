@@ -6,7 +6,7 @@
 // @homepage    https://github.com/Lockvictor/yoedge-horizontal-screen
 // @updateURL   https://github.com/Lockvictor/yoedge-horizontal-screen/raw/master/yoedge-horizontal-screen.user.js
 // @match       http://*.yoedge.com/smp-app/*
-// @version     1.0
+// @version     1.0.1
 // @grant       none
 // ==/UserScript==
 
@@ -25,8 +25,6 @@ var gMangaAreaRatio = DEFAULT_SCALE_RATIO; //漫画宽度占屏幕宽度的比�
 
 (function () {
     'use strict';
-    // 平滑滚动
-    document.body.style.scrollBehavior = "smooth";
 
     // 调整工具按钮，把position由absolute改为fixed固定在右下角
     // 工具按钮延迟加载，因此采用定时检测
@@ -36,7 +34,7 @@ var gMangaAreaRatio = DEFAULT_SCALE_RATIO; //漫画宽度占屏幕宽度的比�
         var settingButton = normalButton.parentElement;
         if (settingButton !== null) {
             settingButton.style.position = 'fixed';
-            // 把弹出的工具栏也改为fixed固定在右下角//
+            // 把弹出的工具栏也改为fixed固定在右下角
             // 每次点击工具按钮弹出工具栏时都会计算工具栏的位置，所以只能把修改注册到click事件中
             normalButton.addEventListener('click', function (event) {
                 var toolContainer = document.getElementsByClassName('tool-container')[0];
@@ -147,10 +145,10 @@ function customizeShortcut(canvasObj) {
                 scaleCanvas(canvasObj, 0);
                 break;
             case 'j':
-                scrollBy(0, screen.width * gMangaAreaRatio * MANGA_ASPECT_RATIO * SCROLLBY_RATIO);
+                smoothyScrollBy(0, screen.width * gMangaAreaRatio * MANGA_ASPECT_RATIO * SCROLLBY_RATIO);
                 break;
             case 'k':
-                scrollBy(0, -screen.width * gMangaAreaRatio * MANGA_ASPECT_RATIO * SCROLLBY_RATIO);
+                smoothyScrollBy(0, -screen.width * gMangaAreaRatio * MANGA_ASPECT_RATIO * SCROLLBY_RATIO);
                 break;
             case 'h':
                 prePage();
@@ -168,13 +166,22 @@ function customizeShortcut(canvasObj) {
 function prePage() {
     if (0 != smp.controller.now && !smp.controller.loading && !smp.controller.quickPlay()) {
         smp.controller.prePage();
-        scroll(0, document.body.scrollHeight);
+        smoothyScrollTo(0, document.body.scrollHeight);
     }
 }
 
 function nextPage() {
     if (!smp.controller.loading && !smp.controller.quickPlay()) {
         smp.controller.nextPage();
-        scroll(0, 0);
+        smoothyScrollTo(0, 0);
     }
+}
+
+
+function smoothyScrollBy(offsetX, offsetY) {
+    window.scrollBy({top: offsetY, left: offsetX, behavior: 'smooth'});
+}
+
+function smoothyScrollTo(x, y) {
+    window.scrollTo({top: y, left: x, behavior: 'smooth'});
 }
