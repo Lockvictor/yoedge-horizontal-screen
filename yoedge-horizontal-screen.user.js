@@ -28,18 +28,22 @@ var gMangaAreaRatio = DEFAULT_SCALE_RATIO; //漫画宽度占屏幕宽度的比�
     // 平滑滚动
     document.body.style.scrollBehavior = "smooth";
 
-    // 调整工具栏
+    // 调整工具按钮，把position由absolute改为fixed固定在右下角
+    // 工具按钮延迟加载，因此采用定时检测
     var settingButtonFlag;
     settingButtonFlag = setInterval(function () {
-        var settingButton = document.getElementById('normal-button').parentElement;
+        var normalButton = document.getElementById('normal-button');
+        var settingButton = normalButton.parentElement;
         if (settingButton !== null) {
             settingButton.style.position = 'fixed';
-            // 修正弹出的工具栏的位置
-            // settingButton.addEventListener('click', function () {
-            //     var toolContainer = document.getElementsByClassName('tool-container')[0];
-            //     toolContainer.style.position = 'fixed';
-            //     toolContainer.style.top = '99.5%';
-            // });
+            // 把弹出的工具栏也改为fixed固定在右下角//
+            // 每次点击工具按钮弹出工具栏时都会计算工具栏的位置，所以只能把修改注册到click事件中
+            normalButton.addEventListener('click', function (event) {
+                var toolContainer = document.getElementsByClassName('tool-container')[0];
+                toolContainer.style.position = 'fixed';
+                toolContainer.style.top = '';
+                toolContainer.style.bottom = '0.5%';
+            });
             clearInterval(settingButtonFlag);
         }
     }, 1000);
@@ -54,7 +58,7 @@ var gMangaAreaRatio = DEFAULT_SCALE_RATIO; //漫画宽度占屏幕宽度的比�
     containerObj.style.textAlign = 'center';
     scaleCanvas(canvasObj, 0);
 
-    // 添加mask覆盖canvas，屏蔽原有事件
+    // 添加mask覆盖canvas，屏蔽原有事件，以便实现自定义点击翻页和缩放
     addCanvasMask(canvasObj, containerObj);
 
     // 修正最后一页的弹出导航框被mask遮盖的问题
