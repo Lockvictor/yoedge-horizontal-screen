@@ -40,6 +40,15 @@
    >
    > h/l		上一页/下一页
 
-   快捷键全部定义在右手区域，单手即可完成所有浏览行为，再也不用握着鼠标点点点。
+   快捷键全部定义在右手区域，单手即可完成所有浏览行为，相对用鼠标操作来说更轻松便捷。
 
-   注：如果浏览器装有VimFx或Vimium等Vim快捷键插件，需要把yoedge.com加入Vim插件黑名单，否则有快捷键冲突。
+
+# 注意事项
+
+* **平滑滚动兼容（重要）**
+
+  当前所用的平滑滚动只有Firefox、Chrome、Opera支持，其中只有Firefox默认开启，后两者需要在浏览器地址栏输入chrome://flags/#enable-experimental-web-platform-features然后激活这一项，我就懒得做兼容了。
+
+* 快捷键冲突
+
+  如果浏览器装有VimFx或Vimium等Vim快捷键插件，需要把yoedge.com加入Vim插件黑名单，否则有快捷键冲突。
