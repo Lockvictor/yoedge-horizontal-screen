@@ -6,7 +6,7 @@
 // @homepage    https://github.com/Lockvictor/yoedge-horizontal-screen
 // @updateURL   https://github.com/Lockvictor/yoedge-horizontal-screen/raw/master/yoedge-horizontal-screen.user.js
 // @match       http://*.yoedge.com/smp-app/*
-// @version     0.1
+// @version     1.0
 // @grant       none
 // ==/UserScript==
 
