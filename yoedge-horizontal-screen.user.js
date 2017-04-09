@@ -6,7 +6,7 @@
 // @homepage    https://github.com/Lockvictor/yoedge-horizontal-screen
 // @updateURL   https://github.com/Lockvictor/yoedge-horizontal-screen/raw/master/yoedge-horizontal-screen.user.js
 // @match       http://*.yoedge.com/smp-app/*
-// @version     1.0.1
+// @version     1.0.2
 // @grant       none
 // ==/UserScript==
 
@@ -131,7 +131,8 @@ function fixModalBehavior() {
 
 
 function customizeShortcut(canvasObj) {
-    //漫画缩放、滚动、翻页
+    // 漫画缩放、滚动、翻页
+    // 缩放和滚动都可以持续响应，于是注册到keydown
     document.addEventListener('keydown', function (event) {
         switch (event.key) {
             case '=':
@@ -150,11 +151,22 @@ function customizeShortcut(canvasObj) {
             case 'k':
                 smoothyScrollBy(0, -screen.width * gMangaAreaRatio * MANGA_ASPECT_RATIO * SCROLLBY_RATIO);
                 break;
+            default:
+                break;
+        }
+    });
+
+    // 翻页和跳转下一话是单次响应，注册到keyup
+    document.addEventListener('keyup', function (event) {
+        switch (event.key) {
             case 'h':
                 prePage();
                 break;
             case 'l':
                 nextPage();
+                break;
+            case 'n':
+                smp.toolbar.nextApp();
                 break;
             default:
                 break;
@@ -179,9 +191,9 @@ function nextPage() {
 
 
 function smoothyScrollBy(offsetX, offsetY) {
-    window.scrollBy({top: offsetY, left: offsetX, behavior: 'smooth'});
+    window.scrollBy({ top: offsetY, left: offsetX, behavior: 'smooth' });
 }
 
 function smoothyScrollTo(x, y) {
-    window.scrollTo({top: y, left: x, behavior: 'smooth'});
+    window.scrollTo({ top: y, left: x, behavior: 'smooth' });
 }
