@@ -6,19 +6,22 @@
 // @homepage    https://github.com/Lockvictor/yoedge-horizontal-screen
 // @updateURL   https://github.com/Lockvictor/yoedge-horizontal-screen/raw/master/yoedge-horizontal-screen.user.js
 // @match       http://*.yoedge.com/smp-app/*
-// @version     1.0.2
+// @version     1.0.4
 // @grant       none
 // ==/UserScript==
+
+const canvasObj = document.getElementsByTagName('canvas')[0];
+const containerObj = canvasObj.parentElement;
 
 const MANGA_ASPECT_RATIO = 1.5; //漫画宽高比
 
 const DEFAULT_SCALE_RATIO = 0.6; //默认缩放比例
 const MAX_SCALE_RATIO = 1; //最大缩放比例，与屏幕等宽
-const MIN_SCALE_RATIO = 0.5; //最小缩放比例，屏幕的50%
+const MIN_SCALE_RATIO = parseInt(canvasObj.style.width) / screen.width; //最小缩放比例，与屏幕等高
 const SCALE_STEP = 0.05;
 
 const PAGE_BUTTON_AREA_RATIO = 0.1; //顶部和底部响应翻页事件的区域比例，10%
-var SCROLLBY_RATIO = 0.15; //快捷键滚动屏幕比例
+const SCROLLBY_RATIO = 0.15; //快捷键滚动屏幕比例
 
 var gMangaAreaRatio = DEFAULT_SCALE_RATIO; //漫画宽度占屏幕宽度的比例
 
@@ -47,31 +50,29 @@ var gMangaAreaRatio = DEFAULT_SCALE_RATIO; //漫画宽度占屏幕宽度的比�
     }, 1000);
 
     // 调整container和canvas
-    var canvasObj = document.getElementsByTagName('canvas')[0];
-    var containerObj = canvasObj.parentElement;
-
     containerObj.style.width = '100%';
     containerObj.style.height = 'auto';
     containerObj.style.margin = '0';
     containerObj.style.textAlign = 'center';
-    scaleCanvas(canvasObj, 0);
+    scaleCanvas(0);
 
     // 添加mask覆盖canvas，屏蔽原有事件，以便实现自定义点击翻页和缩放
-    addCanvasMask(canvasObj, containerObj);
+    addCanvasMask();
 
     // 修正最后一页的弹出导航框被mask遮盖的问题
     fixModalBehavior();
 
     // 自定义缩放、滚动、翻页快捷键
-    customizeShortcut(canvasObj);
+    customizeShortcut();
 })();
 
 
-function scaleCanvas(canvasObj, increment) {
+function scaleCanvas(increment) {
+    var expectedScaleRatio = gMangaAreaRatio + increment;
     if (increment > 0) {
-        gMangaAreaRatio = (gMangaAreaRatio >= MAX_SCALE_RATIO) ? MAX_SCALE_RATIO : (gMangaAreaRatio + increment);
+        gMangaAreaRatio = (expectedScaleRatio >= MAX_SCALE_RATIO) ? MAX_SCALE_RATIO : expectedScaleRatio;
     } else if (increment < 0) {
-        gMangaAreaRatio = (gMangaAreaRatio <= MIN_SCALE_RATIO) ? MIN_SCALE_RATIO : (gMangaAreaRatio + increment);
+        gMangaAreaRatio = (expectedScaleRatio <= MIN_SCALE_RATIO) ? MIN_SCALE_RATIO : expectedScaleRatio;
     }
 
     var newWidth = screen.width * gMangaAreaRatio;
@@ -89,7 +90,7 @@ function scaleCanvas(canvasObj, increment) {
 }
 
 
-function addCanvasMask(canvasObj, containerObj) {
+function addCanvasMask() {
     var canvasWidth = screen.width * gMangaAreaRatio;
     var canvasHeight = canvasWidth * MANGA_ASPECT_RATIO;
 
@@ -130,20 +131,20 @@ function fixModalBehavior() {
 }
 
 
-function customizeShortcut(canvasObj) {
+function customizeShortcut() {
     // 漫画缩放、滚动、翻页
     // 缩放和滚动都可以持续响应，于是注册到keydown
     document.addEventListener('keydown', function (event) {
         switch (event.key) {
             case '=':
-                scaleCanvas(canvasObj, SCALE_STEP);
+                scaleCanvas(SCALE_STEP);
                 break;
             case '-':
-                scaleCanvas(canvasObj, -SCALE_STEP);
+                scaleCanvas(-SCALE_STEP);
                 break;
             case '0':
                 gMangaAreaRatio = DEFAULT_SCALE_RATIO;
-                scaleCanvas(canvasObj, 0);
+                scaleCanvas(0);
                 break;
             case 'j':
                 smoothyScrollBy(0, screen.width * gMangaAreaRatio * MANGA_ASPECT_RATIO * SCROLLBY_RATIO);
