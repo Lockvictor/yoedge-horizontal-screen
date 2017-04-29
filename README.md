@@ -50,7 +50,7 @@
 
 * **平滑滚动兼容（重要）**
 
-  当前所用的平滑滚动只有Firefox、Chrome、Opera支持，其中只有Firefox默认开启，后两者需要在浏览器地址栏输入chrome://flags/#enable-experimental-web-platform-features然后激活这一项，否则略影响阅读体验。（不使用j/k快捷键的话可以忽略此条）
+  当前所用的平滑滚动只有Firefox、Chrome、Opera支持，其中只有Firefox默认开启，后两者需要在浏览器地址栏输入chrome://flags/#enable-experimental-web-platform-features然后激活这一项，否则虽然不影响正常功能，但略影响阅读体验。（不使用j/k快捷键的话可忽略此条）
 
 * 快捷键冲突
 

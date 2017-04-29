@@ -6,7 +6,7 @@
 // @homepage    https://github.com/Lockvictor/yoedge-horizontal-screen
 // @updateURL   https://github.com/Lockvictor/yoedge-horizontal-screen/raw/master/yoedge-horizontal-screen.user.js
 // @match       http://*.yoedge.com/smp-app/*
-// @version     1.0.4
+// @version     1.0.5
 // @grant       none
 // ==/UserScript==
 
@@ -192,9 +192,17 @@ function nextPage() {
 
 
 function smoothyScrollBy(offsetX, offsetY) {
-    window.scrollBy({ top: offsetY, left: offsetX, behavior: 'smooth' });
+    try {
+        window.scrollBy({ top: offsetY, left: offsetX, behavior: 'smooth' });
+    } catch (error) {
+        window.scrollBy(offsetX, offsetY);
+    }
 }
 
 function smoothyScrollTo(x, y) {
-    window.scrollTo({ top: y, left: x, behavior: 'smooth' });
+    try {
+        window.scrollTo({ top: y, left: x, behavior: 'smooth' });
+    } catch (error) {
+        window.scrollTo(x, y);
+    }
 }
