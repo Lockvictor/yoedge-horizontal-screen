@@ -2,11 +2,11 @@
 // @name        yoedge-horizontal-screen
 // @namespace   https://github.com/Lockvictor
 // @author      Lockvictor
-// @description 实现灰机汉化组漫画网站（yoedge.com）的横屏阅读模式 
+// @description 实现灰机汉化组漫画网站（yoedge.com）的横屏阅读模式
 // @homepage    https://github.com/Lockvictor/yoedge-horizontal-screen
 // @updateURL   https://github.com/Lockvictor/yoedge-horizontal-screen/raw/master/yoedge-horizontal-screen.user.js
 // @match       http://*.yoedge.com/smp-app/*
-// @version     1.0.4
+// @version     1.0.5
 // @grant       none
 // ==/UserScript==
 
@@ -110,9 +110,9 @@ function addCanvasMask() {
         var canvasHeight = screen.width * gMangaAreaRatio * MANGA_ASPECT_RATIO;
         var pageButtonAreaHeight = canvasHeight * PAGE_BUTTON_AREA_RATIO;
         if (event.layerY <= pageButtonAreaHeight) {
-            prePage()
+            prePage();
         } else if (event.layerY >= (canvasHeight - pageButtonAreaHeight)) {
-            nextPage()
+            nextPage();
         }
     });
 
@@ -177,7 +177,7 @@ function customizeShortcut() {
 
 
 function prePage() {
-    if (0 != smp.controller.now && !smp.controller.loading && !smp.controller.quickPlay()) {
+    if (0 !== smp.controller.now && !smp.controller.loading && !smp.controller.quickPlay()) {
         smp.controller.prePage();
         smoothyScrollTo(0, document.body.scrollHeight);
     }
@@ -192,9 +192,17 @@ function nextPage() {
 
 
 function smoothyScrollBy(offsetX, offsetY) {
-    window.scrollBy({ top: offsetY, left: offsetX, behavior: 'smooth' });
+    try {
+        window.scrollBy({ top: offsetY, left: offsetX, behavior: 'smooth' });
+    } catch (error) {
+        window.scrollBy(offsetX, offsetY);
+    }
 }
 
 function smoothyScrollTo(x, y) {
-    window.scrollTo({ top: y, left: x, behavior: 'smooth' });
+    try {
+        window.scrollTo({ top: y, left: x, behavior: 'smooth' });
+    } catch (error) {
+        window.scrollTo(x, y);
+    }
 }
