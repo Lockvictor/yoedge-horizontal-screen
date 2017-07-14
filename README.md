@@ -20,6 +20,8 @@
 
    脚本需要通过浏览器插件执行，可以选择安装[Greasemonkey](https://addons.mozilla.org/zh-cn/firefox/addon/greasemonkey/)或者[Tampermonkey](http://tampermonkey.net/)，Greasemonkey适用于Firefox，Tampermonkey适用于Chrome、Microsoft Edge、Safari、Opera Next和Firefox。
 
+   （Tampermonkey官网上Chrome版的安装链接指向Chrome Web Store，在中国大陆无法访问，可自行搜索对应的.crx文件安装，另外采用Chrome内核的360浏览器、搜狗浏览器等，也可在相应的应用中心搜索Tampermonkey安装）
+
 2. 安装脚本
 
    进入Greasy Fork上该脚本的[主页](https://greasyfork.org/zh-CN/scripts/28767-yoedge-horizontal-screen)，点击“安装此脚本”。
