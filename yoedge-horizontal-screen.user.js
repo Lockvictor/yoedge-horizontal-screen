@@ -75,6 +75,11 @@ function loadAllPage(config) {
         
         if (loadStartIndex === INDEX_LIMIT) {
             clearInterval(imgSizeCheckFlag);
+            for (let i = 0; i < orderList.length; i++) {
+                let order = orderList[i];
+                let img = document.getElementById('img' + order);
+                document.body.removeChild(img);
+            }
         }
         // console.log('loadStartIndex: ' + loadStartIndex);
     }, 1000);
