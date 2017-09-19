@@ -6,27 +6,27 @@
 // @homepage    https://github.com/Lockvictor/yoedge-horizontal-screen
 // @updateURL   https://github.com/Lockvictor/yoedge-horizontal-screen/raw/master/yoedge-horizontal-screen.user.js
 // @match       http://*.yoedge.com/smp-app/*
-// @version     2.1.0
+// @version     2.1.1
 // @grant       none
 // ==/UserScript==
 
 //漫画宽高比
-const MANGA_ASPECT_RATIO = 1.5;
+var MANGA_ASPECT_RATIO = 1.5;
 
 //默认屏幕占比
-const DEFAULT_SCALE_RATIO = 0.6;
+var DEFAULT_SCALE_RATIO = 0.6;
 //最大占比，漫画与屏幕等宽
-const MAX_SCALE_RATIO = 1;
+var MAX_SCALE_RATIO = 1;
 //最小占比，漫画与屏幕等高，即原来的竖屏模式
-const MIN_SCALE_RATIO = window.screen.height / MANGA_ASPECT_RATIO / window.screen.width;
+var MIN_SCALE_RATIO = window.screen.height / MANGA_ASPECT_RATIO / window.screen.width;
 //屏幕占比缩放步长
-const SCALE_STEP = 0.05;
+var SCALE_STEP = 0.05;
 
 //j和k快捷键滚动屏幕的比例
-const SCROLLBY_RATIO = 0.2;
+var SCROLLBY_RATIO = 0.2;
 
 //漫画当前屏幕占比
-let gMangaAreaRatio = DEFAULT_SCALE_RATIO;
+var gMangaAreaRatio = DEFAULT_SCALE_RATIO;
 
 (function () {
     'use strict';
@@ -35,51 +35,56 @@ let gMangaAreaRatio = DEFAULT_SCALE_RATIO;
     document.addEventListener('contextmenu', event => event.preventDefault());
 
     //获取本话的配置信息，主要包括页数和图片的url
-    let configUrl = window.location.href.replace('index.html', 'smp_cfg.json');
-    fetch(configUrl).then(response => response.json())
-        .then(config => loadAllPage(config))
-        .catch(e => alert(e));
+    var configString = get("smp_cfg.json");
+    loadAllPage(JSON.parse(configString));
 })();
+
+function get(url) {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", url, false);
+    xmlHttp.send(null);
+
+    return xmlHttp.responseText;
+}
 
 function loadAllPage(config) {
     //获取图片url和序号
-    let orderList = config.pages.order;
-    let imageUrlList = config.pages.page;
+    var orderList = config.pages.order;
+    var imageUrlList = config.pages.page;
 
     //创建漫画原图的img元素
-    for (let i = 0; i < orderList.length; i++) {
-        let order = orderList[i];
-        let img = document.createElement('img');
+    for (var i = 0; i < orderList.length; i++) {
+        var order = orderList[i];
+        var img = document.createElement('img');
         img.id = 'img' + order;
         img.style.display = 'none';
         img.src = imageUrlList[order];
         document.body.appendChild(img);
     }
 
-    let imgElementList = document.getElementsByTagName('img');
+    var imgElementList = document.getElementsByTagName('img');
 
     //图片传输需要时间，直接获取会出错，采用分次加载，每次加载5张图
-    let loadStartIndex = 0;
-    const LOAD_STEP = 5;
-    const INDEX_LIMIT = imgElementList.length;
+    var loadStartIndex = 0;
+    var loadEndIndex = 0;
+    var LOAD_STEP = 5;
+    var INDEX_LIMIT = imgElementList.length;
     // console.log(`INDEX_LIMIT: ${INDEX_LIMIT}`);
-    let imgSizeCheckFlag = setInterval(function () {
-        let expectEndIndex = loadStartIndex + LOAD_STEP;
-        let loadEndIndex = (expectEndIndex > INDEX_LIMIT)? INDEX_LIMIT : expectEndIndex;
-
+    var imgSizeCheckFlag = setInterval(function () {
+        loadEndIndex = ((loadStartIndex + LOAD_STEP) > INDEX_LIMIT) ? INDEX_LIMIT : (loadStartIndex + LOAD_STEP);
         if (isImageOk(imgElementList, loadStartIndex, loadEndIndex)) {
             //用canvas绘制原图，实现反色块的处理
             drawImageByCanvas(orderList, imageUrlList, loadStartIndex, loadEndIndex);
             loadStartIndex = loadEndIndex;
         }
-        
+
         if (loadStartIndex === INDEX_LIMIT) {
             clearInterval(imgSizeCheckFlag);
-            for (let i = 0; i < orderList.length; i++) {
-                let order = orderList[i];
-                let img = document.getElementById('img' + order);
+            for (var i = 0; i < orderList.length; i++) {
+                var img = document.getElementById('img' + orderList[i]);
                 document.body.removeChild(img);
             }
+            imgElementList = null;
         }
         // console.log('loadStartIndex: ' + loadStartIndex);
     }, 1000);
@@ -89,9 +94,9 @@ function loadAllPage(config) {
 }
 
 function isImageOk(imgElementList, startIndex, endIndex) {
-    let isLoaded = true;
-    for (let i = startIndex; i < endIndex; i++) {
-        let img = imgElementList[i];
+    var isLoaded = true;
+    for (var i = startIndex; i < endIndex; i++) {
+        var img = imgElementList[i];
         if (!img.complete || img.naturalWidth === 0) {
             isLoaded = false;
             break;
@@ -101,16 +106,16 @@ function isImageOk(imgElementList, startIndex, endIndex) {
 }
 
 function drawImageByCanvas(orderList, imageUrlList, startIndex, endIndex) {
-    for (let i = startIndex; i < endIndex; i++) {
-        let order = orderList[i];
+    for (var i = startIndex; i < endIndex; i++) {
+        var order = orderList[i];
 
-        let img = document.getElementById('img' + order);
-        let width = img.naturalWidth;
-        let height = img.naturalHeight;
+        var img = document.getElementById('img' + order);
+        var width = img.naturalWidth;
+        var height = img.naturalHeight;
         // console.log(img);
         // console.log(`order: ${order}, width: ${width}, height: ${height}`);
 
-        let mgcanv = document.createElement('canvas');
+        var mgcanv = document.createElement('canvas');
         mgcanv.id = 'canvas' + order;
         mgcanv.width = width;
         mgcanv.height = height;
@@ -119,13 +124,14 @@ function drawImageByCanvas(orderList, imageUrlList, startIndex, endIndex) {
         mgcanv.style.width = numberToPercentage(gMangaAreaRatio);
         // console.log(mgcanv);
 
-        let context = mgcanv.getContext('2d');
+        var context = mgcanv.getContext('2d');
         context.drawImage(img, 0, 0);
         //前5张图没有反色块
         if (i > 4) {
             cleanClutter(imageUrlList[order], context, width, height);
         }
         document.body.appendChild(mgcanv);
+        console.log(mgcanv);
     }
 }
 
