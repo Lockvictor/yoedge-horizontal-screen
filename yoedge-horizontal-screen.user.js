@@ -6,7 +6,7 @@
 // @homepage    https://github.com/Lockvictor/yoedge-horizontal-screen
 // @updateURL   https://github.com/Lockvictor/yoedge-horizontal-screen/raw/master/yoedge-horizontal-screen.user.js
 // @match       http://*.yoedge.com/smp-app/*
-// @version     2.1.1
+// @version     2.1.2
 // @grant       none
 // ==/UserScript==
 
@@ -85,6 +85,7 @@ function loadAllPage(config) {
                 document.body.removeChild(img);
             }
             imgElementList = null;
+            addNextEpisodeButton();
         }
         // console.log('loadStartIndex: ' + loadStartIndex);
     }, 1000);
@@ -228,19 +229,19 @@ function cleanClutter(imageUrl, context, width, height) {
     context.putImageData(imageData, 0, 0);
 }
 
-function scale(increment) {
-    var expectedScaleRatio = gMangaAreaRatio + increment;
-    if (increment > 0) {
-        gMangaAreaRatio = (expectedScaleRatio >= MAX_SCALE_RATIO) ? MAX_SCALE_RATIO : expectedScaleRatio;
-    } else if (increment < 0) {
-        gMangaAreaRatio = (expectedScaleRatio <= MIN_SCALE_RATIO) ? MIN_SCALE_RATIO : expectedScaleRatio;
-    }
+function addNextEpisodeButton() {
+    var style = document.createElement('style');
+    style.innerHTML = "#next-episode { display: block;  margin: 0 auto;  height: 70px;  background: rgba(211, 211, 211, 0.3) url('res/common/pre.png') no-repeat 50% 14px;}";
+    style.innerHTML += "#next-episode:hover { background-color: rgba(211, 211, 211, 0.5); }";
+    document.head.appendChild(style);
 
-    var newWidth = numberToPercentage(gMangaAreaRatio);
-    canvasList = document.getElementsByTagName('canvas');
-    for (var i = 0; i < canvasList.length; i++) {
-        canvasList[i].style.width = newWidth;
-    }
+    var nextEpisodeButton = document.createElement('div');
+    nextEpisodeButton.id = 'next-episode';
+    nextEpisodeButton.style.width = numberToPercentage(gMangaAreaRatio);
+    nextEpisodeButton.addEventListener('click', function (event) {
+        smp.toolbar.nextApp();
+    });
+    document.body.appendChild(nextEpisodeButton);
 }
 
 function customizeShortcut() {
@@ -285,6 +286,23 @@ function customizeShortcut() {
                 break;
         }
     });
+}
+
+function scale(increment) {
+    var expectedScaleRatio = gMangaAreaRatio + increment;
+    if (increment > 0) {
+        gMangaAreaRatio = (expectedScaleRatio >= MAX_SCALE_RATIO) ? MAX_SCALE_RATIO : expectedScaleRatio;
+    } else if (increment < 0) {
+        gMangaAreaRatio = (expectedScaleRatio <= MIN_SCALE_RATIO) ? MIN_SCALE_RATIO : expectedScaleRatio;
+    }
+
+    var newWidth = numberToPercentage(gMangaAreaRatio);
+    canvasList = document.getElementsByTagName('canvas');
+    for (var i = 0; i < canvasList.length; i++) {
+        canvasList[i].style.width = newWidth;
+    }
+
+    document.getElementById('next-episode').style.width = newWidth;
 }
 
 
