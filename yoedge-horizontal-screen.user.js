@@ -6,7 +6,7 @@
 // @homepage    https://github.com/Lockvictor/yoedge-horizontal-screen
 // @updateURL   https://github.com/Lockvictor/yoedge-horizontal-screen/raw/master/yoedge-horizontal-screen.user.js
 // @match       http://*.yoedge.com/smp-app/*
-// @version     2.1.2
+// @version     2.1.3
 // @grant       none
 // ==/UserScript==
 
@@ -32,7 +32,9 @@ var gMangaAreaRatio = DEFAULT_SCALE_RATIO;
     'use strict';
 
     document.body.innerHTML = '';
-    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('contextmenu', function (event) {
+        event.preventDefault();
+    });
 
     //获取本话的配置信息，主要包括页数和图片的url
     var configString = get("smp_cfg.json");
@@ -88,7 +90,7 @@ function loadAllPage(config) {
             addNextEpisodeButton();
         }
         // console.log('loadStartIndex: ' + loadStartIndex);
-    }, 1000);
+    }, 2000);
 
     // 自定义缩放、滚动等快捷键
     customizeShortcut();
@@ -132,101 +134,107 @@ function drawImageByCanvas(orderList, imageUrlList, startIndex, endIndex) {
             cleanClutter(imageUrlList[order], context, width, height);
         }
         document.body.appendChild(mgcanv);
-        console.log(mgcanv);
+        // console.log(mgcanv);
     }
 }
 
 function cleanClutter(imageUrl, context, width, height) {
-    var imageData = context.getImageData(0, 0, width, height);
-    var data = imageData.data;
+    if (imageUrl && window.clutter && imageUrl.indexOf("pages") != -1 && width > 200 && height > 300 && (
+        (imageUrl.indexOf('.png') != -1 && window.clutter == '1') ||
+        (imageUrl.indexOf('.png') != -1 && window.clutter == '2' && smp.controller.type == '0' && imageUrl.match(/\/0{0,3}[1aA]\.png$/) !== null) ||
+        (imageUrl.indexOf('.png') != -1 && window.clutter == '2' && smp.controller.type == '1' && imageUrl.match(/\/0?00[012345]\.png$/) === null) ||
+        (imageUrl.indexOf('.jpg') != -1 && window.clutter == '2' && smp.controller.type == '1' && imageUrl.match(/\/0?00[012345]\.jpg$/) === null))) {
+        var imageData = context.getImageData(0, 0, width, height);
+        var data = imageData.data;
 
-    var j1 = 0, j2 = 0;
-    var r = width * 4, r1 = r * 110, r2 = r;
-    var y1 = Math.floor(height >> 1) & 0xFFFFFFE;
-    if (window.clutter == '2' && imageUrl.indexOf('.png') !== -1) {
-        y1 = 100;
-    }
-    var x1 = Math.floor(width / 3);
-    var x2 = x1 << 1;
-    var y2 = y1 + 20;
-    if (height > 550) {
-        y2 = y1 + 60;
-    }
-
-    if (window.clutter == '2') {
-        var lastOf = imageUrl.lastIndexOf('/');
-        var fileName = decodeURI(imageUrl.substring(lastOf));
-        if (fileName.indexOf("3") != -1) {
-            y1 -= 8;
-            y2 -= 11;
-        } else if (fileName.indexOf("4") != -1) {
-            y1 -= 6;
-            y2 -= 13;
-        } else if (fileName.indexOf("5") != -1) {
-            y2 -= 14;
-        } else if (fileName.indexOf("7") != -1) {
-            y1 -= 2;
-            y2 -= 3;
-        } else if (fileName.indexOf("9") != -1) {
-            y2 -= 13;
-        } else if (fileName.indexOf("01") != -1) {
-            y2 -= 11;
-        } else if (fileName.indexOf("02") != -1) {
-            y1 -= 12;
-            y2 -= 17;
+        var j1 = 0, j2 = 0;
+        var r = width * 4, r1 = r * 110, r2 = r;
+        var y1 = Math.floor(height >> 1) & 0xFFFFFFE;
+        if (window.clutter == '2' && imageUrl.indexOf('.png') !== -1) {
+            y1 = 100;
         }
-        if (fileName.indexOf("4") != -1) {
-            x1 -= 7;
-            x2 -= 19;
-        } else if (fileName.indexOf("5") != -1) {
-            x1 -= 15;
-            x2 -= 13;
-        } else if (fileName.indexOf("6") != -1) {
-            x1 -= 31;
-            x2 = x1 + 76;
-        } else if (fileName.indexOf("7") != -1) {
-            x1 += 21;
-        } else if (fileName.indexOf("8") != -1) {
-            x2 -= 13;
-        } else if (fileName.indexOf("01") != -1) {
-            x2 = x1 + 99;
-        } else if (fileName.indexOf("02") != -1) {
-            x1 -= 13;
-            x2 = x1 + 97;
-        } else if (fileName.indexOf("03") != -1) {
-            x2 = x1 + 91;
+        var x1 = Math.floor(width / 3);
+        var x2 = x1 << 1;
+        var y2 = y1 + 20;
+        if (height > 550) {
+            y2 = y1 + 60;
         }
-    }
-    var is = y1 * r + x1 * 4, i = 0;
 
-    if (window.clutter == '2') {
-        for (j1 = y1; j1 < y2; j1 += 1) {
-            i = is;
-            for (j2 = x1; j2 < x2; j2++) {
-                data[i + 2] = data[i + 2] ^ 0xFF;
-                data[i + 1] = data[i + 1] ^ 0xFF;
-                data[i] = data[i] ^ 0xFF;
-                i += 4;
+        if (window.clutter == '2') {
+            var lastOf = imageUrl.lastIndexOf('/');
+            var fileName = decodeURI(imageUrl.substring(lastOf));
+            if (fileName.indexOf("3") != -1) {
+                y1 -= 8;
+                y2 -= 11;
+            } else if (fileName.indexOf("4") != -1) {
+                y1 -= 6;
+                y2 -= 13;
+            } else if (fileName.indexOf("5") != -1) {
+                y2 -= 14;
+            } else if (fileName.indexOf("7") != -1) {
+                y1 -= 2;
+                y2 -= 3;
+            } else if (fileName.indexOf("9") != -1) {
+                y2 -= 13;
+            } else if (fileName.indexOf("01") != -1) {
+                y2 -= 11;
+            } else if (fileName.indexOf("02") != -1) {
+                y1 -= 12;
+                y2 -= 17;
             }
-            x2--;
-            is += r2;
+            if (fileName.indexOf("4") != -1) {
+                x1 -= 7;
+                x2 -= 19;
+            } else if (fileName.indexOf("5") != -1) {
+                x1 -= 15;
+                x2 -= 13;
+            } else if (fileName.indexOf("6") != -1) {
+                x1 -= 31;
+                x2 = x1 + 76;
+            } else if (fileName.indexOf("7") != -1) {
+                x1 += 21;
+            } else if (fileName.indexOf("8") != -1) {
+                x2 -= 13;
+            } else if (fileName.indexOf("01") != -1) {
+                x2 = x1 + 99;
+            } else if (fileName.indexOf("02") != -1) {
+                x1 -= 13;
+                x2 = x1 + 97;
+            } else if (fileName.indexOf("03") != -1) {
+                x2 = x1 + 91;
+            }
         }
-    } else {
-        for (j1 = y1; j1 < y2; j1 += 1) {
-            i = is;
-            for (j2 = x1; j2 < x2; j2++) {
-                if (data[i + 3 - r1] !== 0) {
-                    data[i + 2] = data[i + 2] ^ data[i + 2 - r1];
-                    data[i + 1] = data[i + 1] ^ data[i + 1 - r1];
-                    data[i] = data[i] ^ data[i - r1];
+        var is = y1 * r + x1 * 4, i = 0;
+
+        if (window.clutter == '2') {
+            for (j1 = y1; j1 < y2; j1 += 1) {
+                i = is;
+                for (j2 = x1; j2 < x2; j2++) {
+                    data[i + 2] = data[i + 2] ^ 0xFF;
+                    data[i + 1] = data[i + 1] ^ 0xFF;
+                    data[i] = data[i] ^ 0xFF;
+                    i += 4;
                 }
-                i += 4;
+                x2--;
+                is += r2;
             }
-            is += r2;
+        } else {
+            for (j1 = y1; j1 < y2; j1 += 1) {
+                i = is;
+                for (j2 = x1; j2 < x2; j2++) {
+                    if (data[i + 3 - r1] !== 0) {
+                        data[i + 2] = data[i + 2] ^ data[i + 2 - r1];
+                        data[i + 1] = data[i + 1] ^ data[i + 1 - r1];
+                        data[i] = data[i] ^ data[i - r1];
+                    }
+                    i += 4;
+                }
+                is += r2;
+            }
         }
-    }
 
-    context.putImageData(imageData, 0, 0);
+        context.putImageData(imageData, 0, 0);
+    }
 }
 
 function addNextEpisodeButton() {
